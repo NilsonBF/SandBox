@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>SandBox</title>
+
+    <link rel="stylesheet" href="lib/codemirror.css">
+    <link rel="stylesheet" href="addon/hint/show-hint.css">
+    <script src="lib/codemirror.js"></script>
+    <script src="addon/hint/show-hint.js"></script>
+    <script src="addon/hint/xml-hint.js"></script>
+    <script src="addon/hint/html-hint.js"></script>
+    <script src="mode/xml/xml.js"></script>
+    <script src="mode/javascript/javascript.js"></script>
+    <script src="mode/css/css.js"></script>
+    <script src="mode/htmlmixed/htmlmixed.js"></script>
+    <script src="addon/edit/closebrackets.js"></script>
+    <script src="addon/edit/closetag.js"></script>
+    <style>
+        textarea {
+            width: 100%;
+            height: 40vh;
+            resize: none
+        }
+        
+        .main {
+            display: inline-flex;
+        }
+        
+        .codes {
+            width: 40vw;
+            height: 40vh;
+            padding: 15px;
+            display: table-cell
+        }
+        
+        .frame {
+            width: 40vw;
+            height: 90vh;
+            padding: 15px;
+            display: table-cell
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #link {
+            width: 100%;
+            height: 5vh !important
+        }
+    </style>
+</head>
+
+<body onkeyup="compila()">
+    <div class='main'>
+        <div class='codes'>
+            <label for="html">HTML</label>
+            <textarea name="" id="html" cols="30" rows="10"></textarea>
+            <label for="css">CSS</label>
+            <textarea name="" id="css" cols="30" rows="10"></textarea>
+            <label for="link">Imports <small>(Separe por quebra de linha (<strong>enter</strong>).)</small></label>
+            <textarea name="" id="link" cols="30" rows="10"></textarea>
+        </div>
+        <div class='frame'>
+            <label for="sand">Resultado</label>
+            <iframe id="sand" frameborder="1"></iframe>
+        </div>
+    </div>
+</body>
+
+<script>
+    const compila = () => {
+        let css = cssEdt.getValue()
+        let html = htmlEdt.getValue()
+        let link = document.getElementById('link').value
+        let page = `
+            <html>
+            <head>
+                ${link}
+                <style>
+                    ${css}
+                </style>
+            </head>
+            <body>
+                ${html}
+            </body>
+            </html>
+        `
+        document.getElementById('sand').src = "data:text/html;charset=utf-8," + page
+    }
+
+    var cssEdt = CodeMirror.fromTextArea(document.getElementById("css"), {
+        lineNumbers: true,
+        extraKeys: {
+            "Ctrl-Space": "autocomplete"
+        },
+        mode: {
+            name: "css",
+            globalVars: true
+        },
+        autoCloseBrackets: true
+    });
+
+    var htmlEdt = CodeMirror.fromTextArea(document.getElementById("html"), {
+        lineNumbers: true,
+        extraKeys: {
+            "Ctrl-Space": "autocomplete"
+        },
+        mode: {
+            name: "text/html",
+            globalVars: true
+        },
+        autoCloseTags: true
+    });
+</script>
+
+</html>
